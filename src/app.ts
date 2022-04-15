@@ -1,19 +1,15 @@
 import cors from "cors";
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
+import "express-async-errors";
 import router from "./routers/index.js";
+import handleErrorsMiddleware from "./middlewares/handleErrorsMiddleware.js";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(router);
 
-app.use((error, req: Request, res: Response, next: NextFunction) => {
-    console.log(error);
-    if (error.response) {
-        return res.sendStatus(error.response.status);
-    }
-    res.sendStatus(500);
-});
+app.use(handleErrorsMiddleware);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
