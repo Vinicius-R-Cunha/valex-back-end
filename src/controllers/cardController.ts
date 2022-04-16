@@ -1,13 +1,22 @@
 import { Request, Response } from "express";
 import * as cardService from "../services/cardService.js";
-import * as employeeRepository from "../repositories/employeeRepository.js";
 
 export async function createCard(req: Request, res: Response) {
     const { companyId } = res.locals;
     const { employeeId, type } = req.body;
 
     await cardService.validateCreation(employeeId, companyId, type);
-    await cardService.create(employeeId, type);
+    const cardData = await cardService.create(employeeId, type);
 
-    res.sendStatus(201);
+    res.status(201).send(cardData);
+}
+
+export async function activateCard(req: Request, res: Response) {
+    const { cardId } = req.params;
+    const { password, cvc } = req.body;
+
+    await cardService.validateActivation(parseFloat(cardId), cvc);
+    await cardService.activate(parseFloat(cardId), password);
+
+    res.sendStatus(200);
 }
