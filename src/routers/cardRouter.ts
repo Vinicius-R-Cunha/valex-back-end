@@ -6,8 +6,20 @@ import activateCardSchema from "../schemas/activateCardSchema.js";
 import createCardSchema from "../schemas/createCardSchema.js";
 
 const cardRouter = Router();
-cardRouter.post('/cards', validateSchemaMiddleWare(createCardSchema), apiKeyValidationMiddleware, createCard);
-cardRouter.post('/activate/:cardId', validateSchemaMiddleWare(activateCardSchema), activateCard);
+
+cardRouter.post(
+    '/cards',
+    validateSchemaMiddleWare(createCardSchema),
+    apiKeyValidationMiddleware,
+    createCard
+);
+
+cardRouter.post(
+    '/activate/:cardId',
+    validateSchemaMiddleWare(activateCardSchema),
+    activateCard
+);
+
 cardRouter.get('/balance/:cardId', getBalance);
 
 export default cardRouter;

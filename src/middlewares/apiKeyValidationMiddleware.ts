@@ -6,7 +6,7 @@ export default async function apiKeyValidationMiddleware(req: Request, res: Resp
 
     const company = await companyRepository.findByApiKey(apiKey);
 
-    if (!company) throw { status: 404 };
+    if (!company) throw { status: 401 };
 
     res.locals.companyId = company.id;
 
