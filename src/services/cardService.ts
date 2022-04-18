@@ -1,6 +1,8 @@
 import { faker } from "@faker-js/faker";
 import * as employeeRepository from "../repositories/employeeRepository.js";
 import * as cardRepository from "../repositories/cardRepository.js";
+import * as rechargeRepository from "../repositories/rechargeRepository.js";
+import * as paymentRepository from "../repositories/paymentRepository.js";
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
@@ -114,4 +116,37 @@ function cardExpired(expirationDate: string) {
 
 export async function activate(cardId: number, password: string) {
     return await cardRepository.update(cardId, { password: bcrypt.hashSync(password, 10) });
+}
+
+export async function validateCard(cardId: number) {
+    const card = await cardRepository.findById(cardId);
+    if (!card) throw { status: 404 };
+
+    return;
+}
+
+export async function balance(cardId: number) {
+    const recharges = await rechargeRepository.findByCardId(cardId);
+    const transactions = await paymentRepository.findByCardId(cardId);
+    const balance = calculateBalance(recharges, transactions);
+
+    return {
+        balance,
+        transactions,
+        recharges
+    };
+}
+
+function calculateBalance(recharges, transactions) {
+    let totalRecharges = 0;
+    recharges.map(recharge => {
+        totalRecharges += recharge?.amount
+    });
+
+    let totalTransactions = 0;
+    transactions.map(transaction => {
+        totalTransactions += transaction?.amount
+    });
+
+    return totalRecharges - totalTransactions;
 }

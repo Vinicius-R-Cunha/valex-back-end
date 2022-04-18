@@ -20,3 +20,12 @@ export async function activateCard(req: Request, res: Response) {
 
     res.sendStatus(200);
 }
+
+export async function getBalance(req: Request, res: Response) {
+    const { cardId } = req.params;
+
+    await cardService.validateCard(parseFloat(cardId));
+    const balance = await cardService.balance(parseFloat(cardId));
+
+    res.status(200).send(balance);
+}
